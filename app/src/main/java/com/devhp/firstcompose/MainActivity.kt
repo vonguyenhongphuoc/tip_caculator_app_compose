@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.devhp.firstcompose.screen.NoteScreen
 import com.devhp.firstcompose.ui.theme.FirstComposeTheme
 
 
@@ -43,5 +44,5 @@ fun MyApp(
 
 @Composable
 fun MainContent() {
-
+    NoteScreen()
 }

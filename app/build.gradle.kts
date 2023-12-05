@@ -67,7 +67,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("com.arthenica:ffmpeg-kit-full:6.0-2")
 
     implementation("androidx.compose.material:material-icons-extended")
 }

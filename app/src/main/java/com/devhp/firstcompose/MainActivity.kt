@@ -11,9 +11,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.devhp.firstcompose.data.NotesDataSource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.devhp.firstcompose.screen.NoteScreen
 import com.devhp.firstcompose.ui.theme.FirstComposeTheme
+import com.devhp.firstcompose.viewmodel.NoteViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -45,9 +46,13 @@ fun MyApp(
 }
 
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainContent() {
-    NoteScreen(notes = NotesDataSource().loadNotes(), onAddNote = {}, onRemoveNote = {})
+    val noteViewModel: NoteViewModel = viewModel()
+    NoteScreen(notes = noteViewModel.noteList, onAddNote = { note ->
+        noteViewModel.addNote(note)
+    }, onRemoveNote = { note ->
+        noteViewModel.removeNote(note)
+    })
 }

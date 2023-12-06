@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp(
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
@@ -41,7 +41,8 @@ fun MyApp(
 }
 
 
+
 @Composable
 fun MainContent() {
-    NoteScreen(notes = emptyList(), onAddNote = {}, onRemoveNote = {})
+    NoteScreen()
 }

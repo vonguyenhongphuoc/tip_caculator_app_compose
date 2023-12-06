@@ -44,5 +44,5 @@ fun MyApp(
 
 @Composable
 fun MainContent() {
-    NoteScreen()
+    NoteScreen(notes = emptyList(), onAddNote = {}, onRemoveNote = {})
 }

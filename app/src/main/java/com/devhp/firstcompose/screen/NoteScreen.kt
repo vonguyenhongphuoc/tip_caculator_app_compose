@@ -40,9 +40,9 @@ import com.devhp.firstcompose.component.NoteButton
 import com.devhp.firstcompose.component.NoteInputText
 import com.devhp.firstcompose.data.NotesDataSource
 import com.devhp.firstcompose.model.Note
+import com.devhp.firstcompose.util.convertDate
 import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun NoteScreen(notes: List<Note>, onAddNote: (Note) -> Unit, onRemoveNote: (Note) -> Unit) {
@@ -105,7 +105,7 @@ fun NoteScreen(notes: List<Note>, onAddNote: (Note) -> Unit, onRemoveNote: (Note
         }
         Divider(modifier = Modifier.padding(10.dp))
         LazyColumn {
-            items(notes) { note ->
+         items(notes) { note ->
                 NoteRow(note = note, onNoteClicked = {
                     onRemoveNote(note)
                 })
@@ -114,7 +114,6 @@ fun NoteScreen(notes: List<Note>, onAddNote: (Note) -> Unit, onRemoveNote: (Note
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoteRow(
     modifier: Modifier = Modifier,
@@ -134,7 +133,7 @@ fun NoteRow(
             Text(text = note.title, style = MaterialTheme.typography.titleMedium)
             Text(text = note.description, style = MaterialTheme.typography.bodyLarge)
             Text(
-                text = note.entryData.format(DateTimeFormatter.ofPattern("EEE, d MMM")),
+                text = convertDate(note.entryDate),
                 style = MaterialTheme.typography.bodySmall
             )
         }
@@ -142,7 +141,6 @@ fun NoteRow(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun PreViewNoteScreen() {

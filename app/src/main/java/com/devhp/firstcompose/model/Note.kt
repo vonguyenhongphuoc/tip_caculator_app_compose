@@ -1,11 +1,25 @@
 package com.devhp.firstcompose.model
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import java.time.LocalDateTime
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.util.Date
 import java.util.UUID
-@RequiresApi(Build.VERSION_CODES.O)
+
+@Entity(tableName = "note_tbl")
 data class Note constructor(
+    @PrimaryKey
     val iD: UUID = UUID.randomUUID(),
-    val title: String, val description: String, val entryData: LocalDateTime = LocalDateTime.now()
+    @ColumnInfo(name = "note_title")
+    val title: String,
+    @ColumnInfo(name = "note_description")
+    val description: String,
+    @ColumnInfo(name = "note_entry_date")
+//    @field:TypeConverters(DateConverter::class)
+    val entryDate: Date = Date()
+
 )
+
+
+
+

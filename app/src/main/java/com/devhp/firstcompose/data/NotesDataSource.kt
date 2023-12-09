@@ -5,7 +5,7 @@ import androidx.annotation.RequiresApi
 import com.devhp.firstcompose.model.Note
 
 class NotesDataSource {
-    @RequiresApi(Build.VERSION_CODES.O)
+
     fun loadNotes(): List<Note> {
         return listOf(
 

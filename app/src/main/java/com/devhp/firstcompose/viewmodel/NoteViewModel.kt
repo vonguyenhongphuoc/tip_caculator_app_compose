@@ -26,6 +26,7 @@ class NoteViewModel @Inject constructor(private val repository: NoteRepository) 
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            // distinctUntilChanged: bỏ qua giá trị trùng lặp, tuy nhiên ở đây là dư thừa vì ở trên kia mình đã sử dụng MutableStateFlow rồi
             repository.getAllNotes().distinctUntilChanged().collect { listOfNotes ->
                 val sortedList = listOfNotes.sortedByDescending { it.entryDate }
                 _noteList.value = sortedList

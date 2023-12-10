@@ -1,6 +1,7 @@
 package com.devhp.firstcompose.di
 
 import com.devhp.firstcompose.network.QuestionApi
+import com.devhp.firstcompose.repository.QuestionRepository
 import com.devhp.firstcompose.util.Constants
 import dagger.Module
 import dagger.Provides
@@ -21,4 +22,8 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(QuestionApi::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideQuestionRepository(api: QuestionApi) = QuestionRepository(api)
 }

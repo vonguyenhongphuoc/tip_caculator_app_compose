@@ -1,12 +1,12 @@
 package com.devhp.mykotlin
 
 fun main() {
-    Repository.startFetch()
-    getResult(result = Repository.getCurrentState())
-    Repository.finishedFetch()
-    getResult(result = Repository.getCurrentState())
-    Repository.error()
-    getResult(result = Repository.getCurrentState())
+//    Repository.startFetch()
+//    getResult(result = Repository.getCurrentState())
+//    Repository.finishedFetch()
+//    getResult(result = Repository.getCurrentState())
+//    Repository.error()
+//    getResult(result = Repository.getCurrentState())
 
 }
 

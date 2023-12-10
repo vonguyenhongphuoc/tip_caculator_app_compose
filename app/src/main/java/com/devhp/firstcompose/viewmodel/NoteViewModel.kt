@@ -48,3 +48,46 @@ class NoteViewModel @Inject constructor(private val repository: NoteRepository) 
 
 
 }
+
+/*
+Sự khác biệt giữa buffer, conflate, collectLatest
+*   val flow = flow {
+            for (i in 1..3) {
+                delay(100) // pretend we are computing it
+                emit(i)
+            }
+        }
+
+        val time = measureTimeMillis {
+            lifecycleScope.launch {
+                flow.buffer()
+                    .collect { value ->
+                        delay(300) // pretend we are processing it
+                        Log.d("MyTag2","Buffer: $value")
+                    }
+
+            }
+        }
+        Log.d("MyTag2","Collected in $time ms")
+
+        val time2 = measureTimeMillis {
+           lifecycleScope.launch {  flow.conflate()
+               .collect { value ->
+                   delay(300) // pretend we are processing it
+                   Log.d("MyTag2","collect: $value")
+               } }
+        }
+        Log.d("MyTag2","Collected in $time2 ms")
+
+
+
+
+        val time3 = measureTimeMillis {
+            lifecycleScope.launch {  flow
+                .collectLatest { value ->
+                    delay(300) // pretend we are processing it
+                    Log.d("MyTag2","collectLatest: $value")
+                } }
+        }
+        Log.d("MyTag2","Collected in $time3 ms")
+* */

@@ -1,6 +1,7 @@
 package com.devhp.firstcompose
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -10,11 +11,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.devhp.firstcompose.screen.NoteScreen
 import com.devhp.firstcompose.ui.theme.FirstComposeTheme
 import com.devhp.firstcompose.viewmodel.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlin.system.measureTimeMillis
 
 
 @AndroidEntryPoint
@@ -46,7 +55,6 @@ fun MyApp(
         content()
     }
 }
-
 
 
 @Composable

@@ -15,13 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,19 +44,32 @@ import androidx.compose.ui.unit.sp
 import com.devhp.firstcompose.model.QuestionItem
 import com.devhp.firstcompose.screens.QuestionsViewModel
 import com.devhp.firstcompose.util.AppColors
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 @Composable
 fun Questions(viewModel: QuestionsViewModel) {
     val questions = viewModel.data.value.data?.toMutableList()
+
+    val questionIndex = remember {
+        mutableStateOf(0)
+    }
     if (viewModel.data.value.loading == true) {
         CircularProgressIndicator()
-        Log.d("MyTag", "Questions: ...Loading...")
     } else {
-       if(questions != null){
-           QuestionDisplay(question = questions.first())
-       }
+        val question = try {
+            questions?.get(questionIndex.value)
+        } catch (ex: Exception) {
+            null
+        }
+        if (questions != null) {
+            QuestionDisplay(
+                question = question!!,
+                questionIndex = questionIndex,
+                viewModel = viewModel
+            ){
+                questionIndex.value = questionIndex.value + 1
+            }
+        }
     }
 }
 
@@ -63,8 +77,8 @@ fun Questions(viewModel: QuestionsViewModel) {
 @Composable
 fun QuestionDisplay(
     question: QuestionItem,
-//    questionIndex: MutableState<Int>,
-//    viewModel: QuestionsViewModel,
+    questionIndex: MutableState<Int>,
+    viewModel: QuestionsViewModel,
     onNextClicked: (Int) -> Unit = {}
 ) {
 
@@ -96,7 +110,7 @@ fun QuestionDisplay(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            QuestionTracker()
+            QuestionTracker(counter = questionIndex.value)
             DrawDottedLine(pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
 
             Column {
@@ -156,10 +170,44 @@ fun QuestionDisplay(
                             )
                         )
                         Spacer(modifier = Modifier.width(5.dp))
-                        Text(text = "$answerText")
+                        val annotatedString = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    fontWeight = FontWeight.Light,
+                                    color = if (correctAnswerState.value == true && index == answerState.value) {
+                                        Color.Green
+                                    } else if (correctAnswerState.value == false && index == answerState.value) {
+                                        Color.Red
+                                    } else {
+                                        AppColors.mOffWhite
+                                    }
+                                )
+                            ) {
+                                append("$answerText")
+                            }
+                        }
+                        Text(text = annotatedString, modifier = Modifier.padding(6.dp))
                     }
                 }
+
+                Button(
+                    onClick = { onNextClicked(questionIndex.value) },
+                    modifier = Modifier
+                        .padding(3.dp)
+                        .align(alignment = Alignment.CenterHorizontally),
+                    shape = RoundedCornerShape(34.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.mLightBlue)
+                ) {
+                    Text(
+                        text = "Next",
+                        modifier = Modifier.padding(4.dp),
+                        color = AppColors.mOffWhite,
+                        fontSize = 17.sp
+                    )
+                }
             }
+
+
         }
 
     }

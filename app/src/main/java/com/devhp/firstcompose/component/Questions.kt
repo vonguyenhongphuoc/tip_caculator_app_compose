@@ -7,18 +7,23 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,14 +53,9 @@ fun Questions(viewModel: QuestionsViewModel) {
         CircularProgressIndicator()
         Log.d("MyTag", "Questions: ...Loading...")
     } else {
-        Log.d("MyTag", "Questions: Loading STOPPED...")
-        LaunchedEffect(key1 = 0, block = {
-            launch(Dispatchers.IO) {
-                questions?.forEachIndexed { index, questionItem ->
-                    Log.d("MyTag", "Questions $index: ${questionItem.question}")
-                }
-            }
-        })
+       if(questions != null){
+           QuestionDisplay(question = questions.first())
+       }
     }
 }
 
@@ -63,13 +63,28 @@ fun Questions(viewModel: QuestionsViewModel) {
 @Composable
 fun QuestionDisplay(
     question: QuestionItem,
-    questionIndex: MutableState<Int>,
-    viewModel: QuestionsViewModel,
-    onNextClicked: (Int) -> Unit
+//    questionIndex: MutableState<Int>,
+//    viewModel: QuestionsViewModel,
+    onNextClicked: (Int) -> Unit = {}
 ) {
 
     val choicesState = remember(question) {
         question.choices?.toMutableList()
+    }
+
+    val answerState = remember(question) {
+        mutableStateOf<Int?>(null)
+    }
+
+    val correctAnswerState = remember {
+        mutableStateOf<Boolean?>(null)
+    }
+
+    val updateAnswer: (Int) -> Unit = remember(question) {
+        {
+            answerState.value = it
+            correctAnswerState.value = choicesState?.get(it) == question.answer
+        }
     }
     Surface(
         modifier = Modifier
@@ -86,7 +101,7 @@ fun QuestionDisplay(
 
             Column {
                 Text(
-                    text = "What's the meaning of all this?",
+                    text = "${question.question}",
                     modifier = Modifier
                         .padding(6.dp)
                         .align(alignment = Alignment.Start)
@@ -99,7 +114,7 @@ fun QuestionDisplay(
                 )
 
                 // Choices
-                choicesState?.forEachIndexed { index, s ->
+                choicesState?.forEachIndexed { index, answerText ->
                     Row(
                         modifier = Modifier
                             .padding(3.dp)
@@ -123,11 +138,25 @@ fun QuestionDisplay(
                                     bottomStartPercent = 50
                                 )
                             )
-                            .background(Color.Transparent)
-
-
+                            .background(Color.Transparent),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-
+                        RadioButton(
+                            selected = (answerState.value == index),
+                            onClick = {
+                                updateAnswer(index)
+                            },
+                            modifier = Modifier.padding(16.dp),
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = if (correctAnswerState.value == true && index == answerState.value) Color.Green.copy(
+                                    alpha = 0.2f
+                                ) else {
+                                    Color.Red.copy(alpha = 0.2f)
+                                }
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(text = "$answerText")
                     }
                 }
             }

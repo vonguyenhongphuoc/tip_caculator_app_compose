@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -36,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,7 +59,9 @@ fun Questions(viewModel: QuestionsViewModel) {
         mutableStateOf(0)
     }
     if (viewModel.data.value.loading == true) {
-        CircularProgressIndicator()
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator()
+        }
     } else {
         val question = try {
             questions?.get(questionIndex.value)
@@ -113,8 +117,14 @@ fun QuestionDisplay(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            if (questionIndex.value >= 3) ShowProgress(score = questionIndex.value)
-            QuestionTracker(counter = questionIndex.value, outOf = viewModel.getTotalQuestionCount())
+            if (questionIndex.value >= 3) ShowProgress(
+                score = questionIndex.value,
+                viewModel.getTotalQuestionCount()
+            )
+            QuestionTracker(
+                counter = questionIndex.value,
+                outOf = viewModel.getTotalQuestionCount()
+            )
             DrawDottedLine(pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
 
             Column {
@@ -230,7 +240,7 @@ fun QuestionTracker(counter: Int = 10, outOf: Int = 100) {
                     fontSize = 27.sp
                 )
             ) {
-                append("Question $counter/")
+                append("Question ${counter + 1}/")
             }
             withStyle(
                 style = SpanStyle(
@@ -263,12 +273,14 @@ fun DrawDottedLine(pathEffect: PathEffect) {
 
 @Preview
 @Composable
-fun ShowProgress(score: Int = 12) {
+fun ShowProgress(score: Int = 20, totalQuestion: Int = 99) {
     val gradient = Brush.linearGradient(listOf(Color(0xFFF95075), Color(0xFFBE6BE5)))
 
-    val progressFactor by remember(score) {
-        mutableStateOf(score * 0.005f)
+    val progressFactor by remember(score, totalQuestion) {
+        mutableStateOf((score / totalQuestion.toFloat()))
     }
+
+
     Row(
         modifier = Modifier
             .padding(3.dp)
@@ -304,13 +316,13 @@ fun ShowProgress(score: Int = 12) {
             )
         ) {
             Text(
-                text = (score * 10).toString(),
+                text = ((score + 1) * 10).toString(),
                 modifier = Modifier
                     .clip(RoundedCornerShape(23.dp))
-                    .fillMaxHeight(0.87f)
                     .fillMaxWidth()
                     .padding(6.dp),
-                color = AppColors.mOffWhite, textAlign = TextAlign.Center
+                color = AppColors.mOffWhite, textAlign = TextAlign.Center,
+                style = TextStyle(fontSize = 8.sp)
             )
         }
     }

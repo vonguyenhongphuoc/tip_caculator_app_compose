@@ -1,4 +1,4 @@
-package com.devhp.firstcompose.screen
+package com.devhp.firstcompose.screen.main
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

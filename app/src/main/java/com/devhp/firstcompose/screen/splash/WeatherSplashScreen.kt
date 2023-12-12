@@ -1,4 +1,4 @@
-package com.devhp.firstcompose.screen
+package com.devhp.firstcompose.screen.splash
 
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.Animatable

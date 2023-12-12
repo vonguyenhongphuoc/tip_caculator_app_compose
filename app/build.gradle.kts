@@ -64,6 +64,7 @@ dependencies {
     val retrofit_version = "2.9.0"
     val coil_version = "2.5.0"
     val lifecycle_version = "2.6.2"
+    val nav_version = "2.7.5"
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -106,4 +107,6 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:$coil_version")
 
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 }

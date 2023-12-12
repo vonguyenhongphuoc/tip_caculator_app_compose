@@ -63,20 +63,26 @@ fun Questions(viewModel: QuestionsViewModel) {
             CircularProgressIndicator()
         }
     } else {
-        val question = try {
-            questions?.get(questionIndex.value)
-        } catch (ex: Exception) {
-            null
-        }
-        if (questions != null) {
-            QuestionDisplay(
-                question = question!!,
-                questionIndex = questionIndex,
-                viewModel = viewModel
-            ) {
-                questionIndex.value = questionIndex.value + 1
+        if(viewModel.data.value.e != null) {
+            viewModel.data.value.e!!.localizedMessage?.let { ErrorDialog(message = it) }
+        }else {
+            val question = try {
+                questions?.get(questionIndex.value)
+            } catch (ex: Exception) {
+                null
+            }
+            if (questions != null) {
+                QuestionDisplay(
+                    question = question!!,
+                    questionIndex = questionIndex,
+                    viewModel = viewModel
+                ) {
+                    questionIndex.value = questionIndex.value + 1
+                }
             }
         }
+
+
     }
 }
 

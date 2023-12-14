@@ -2,6 +2,8 @@ package com.devhp.firstcompose.widget
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
@@ -14,10 +16,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
@@ -32,28 +36,43 @@ fun WeatherAppBar(
     onButtonClicked: () -> Unit = {}
 ) {
     TopAppBar(
+        modifier = Modifier
+            .padding(10.dp)
+            .shadow(
+                elevation = 5.dp,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(10.dp)
+            ),
         title = {
             Text(
                 text = title,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.secondary,
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 15.sp)
             )
         },
         actions = {
             if (isMainScreen) {
                 IconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search Icon",
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
                 }
 
                 IconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More Icon")
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "More Icon",
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
                 }
             } else Box {
                 if (icon != null) {
                     Icon(
                         imageVector = icon,
                         contentDescription = "icon",
-                        tint = MaterialTheme.colorScheme.onSecondary,
+                        tint = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.clickable {
                             onButtonClicked.invoke()
                         })
@@ -61,6 +80,6 @@ fun WeatherAppBar(
             }
         },
         navigationIcon = {},
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Black),
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
     )
 }

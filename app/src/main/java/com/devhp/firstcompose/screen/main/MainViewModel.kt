@@ -1,12 +1,10 @@
 package com.devhp.firstcompose.screen.main
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devhp.firstcompose.data.DataOrException
-import com.devhp.firstcompose.model.City
 import com.devhp.firstcompose.model.Weather
 import com.devhp.firstcompose.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -21,9 +21,9 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
         DataOrException(null, true, null)
     )
 
-    init {
-          loadData()
-    }
+//    init {
+//          loadData()
+//    }
 
     private fun loadData() {
         viewModelScope.launch {

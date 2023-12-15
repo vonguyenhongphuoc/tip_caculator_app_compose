@@ -28,6 +28,8 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.devhp.firstcompose.data.DataOrException
 import com.devhp.firstcompose.model.Weather
+import com.devhp.firstcompose.util.formatDate
+import com.devhp.firstcompose.util.formatDecimals
 import com.devhp.firstcompose.widget.WeatherAppBar
 
 @Composable
@@ -41,7 +43,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel = hilt
             true,
             null
         ), producer = {
-            value = mainViewModel.getWeatherData("Seattle")
+            value = mainViewModel.getWeatherData("Moscow")
         }).value
     if (weatherData.loading == true) {
         CircularProgressIndicator()
@@ -70,6 +72,8 @@ fun MainScaffold(weather: Weather, navController: NavController) {
 @Composable
 fun MainContent(data: Weather) {
     val imageUrl = "https://openweathermap.org/img/wn/${data.list!![0].weather!![0].icon}.png"
+    val weatherItem = data.list[0]
+
     Column(
         modifier = Modifier
             .padding(4.dp)
@@ -78,7 +82,7 @@ fun MainContent(data: Weather) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Nov 29",
+            text = formatDate(weatherItem.dt!!),
             style = TextStyle(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -100,7 +104,7 @@ fun MainContent(data: Weather) {
             ) {
                 WeatherStateImage(imageUrl = imageUrl)
                 Text(
-                    text = "56",
+                    text = formatDecimals(weatherItem.temp!!.day!!) + "°",
                     style = TextStyle(
                         fontSize = 34.sp,
                         fontWeight = FontWeight.ExtraBold,
@@ -108,7 +112,7 @@ fun MainContent(data: Weather) {
                     )
                 )
                 Text(
-                    text = "Snow",
+                    text = weatherItem.weather?.get(0)!!.main!!,
                     style = TextStyle(
                         fontStyle = FontStyle.Italic
                     )

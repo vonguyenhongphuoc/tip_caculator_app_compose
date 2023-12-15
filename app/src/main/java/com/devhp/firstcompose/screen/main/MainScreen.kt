@@ -3,6 +3,7 @@ package com.devhp.firstcompose.screen.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -135,8 +140,51 @@ fun MainContent(data: Weather) {
         Divider()
         Spacer(modifier = Modifier.height(24.dp))
         SunsetSunRiseRow(weather = weatherItem)
+        Text(
+            text = "This Week",
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.15.sp,
+            )
+        )
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = Color(0XFFEEF1EF),
+            shape = RoundedCornerShape(size = 14.dp)
+        ) {
+            LazyColumn(modifier = Modifier.padding(2.dp), contentPadding = PaddingValues(1.dp)) {
+                items(items = data.list) { item: WeatherItem ->
+                    WeatherDetailRow(weather = item)
 
+                }
+            }
+        }
 
+    }
+}
+
+@Composable
+fun WeatherDetailRow(weather: WeatherItem) {
+    val imageUrl = "https://openweathermap.org/img/wn/${weather.weather!![0].icon}.png"
+    Surface(
+        modifier = Modifier
+            .padding(3.dp)
+            .fillMaxWidth(),
+        shape = CircleShape.copy(topEnd = CornerSize(6.dp)), color = Color.White
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = formatDate(weather.dt!!).split(",")[0],
+                modifier = Modifier.padding(start = 5.dp)
+            )
+            WeatherStateImage(imageUrl = imageUrl)
+            
+        }
     }
 }
 
@@ -205,7 +253,7 @@ fun HumidityWindPressureRow(weather: WeatherItem) {
                 )
             )
         }
-        Row(modifier = Modifier.padding(4.dp)) {
+        Row {
             Icon(
                 painter = painterResource(id = R.drawable.pressure),
                 contentDescription = "pressure icon",

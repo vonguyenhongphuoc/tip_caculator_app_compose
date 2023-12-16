@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
@@ -41,8 +42,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.devhp.firstcompose.model.Favorite
 import com.devhp.firstcompose.navigation.WeatherScreens
+import com.devhp.firstcompose.screen.favorite.FavoriteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +55,7 @@ fun WeatherAppBar(
     navController: NavController,
     navIcon: ImageVector = Icons.Default.ArrowBack,
     isMainScreen: Boolean = true,
+    favoriteViewModel: FavoriteViewModel = hiltViewModel(),
     onAddActionClicked: () -> Unit = {},
     onButtonClicked: () -> Unit = {}
 ) {
@@ -128,6 +133,21 @@ fun WeatherAppBar(
                     modifier = Modifier.clickable {
                         onButtonClicked.invoke()
                     })
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Favorite icon",
+                    modifier = Modifier.clickable {
+                        val dataList = title.split(",")
+                        favoriteViewModel.insertFavorite(
+                            Favorite(
+                                city = dataList[0], // city name
+                                country = dataList[1]  // country code
+                            )
+                        )
+                    }, tint = Color.Red
+                        .copy(alpha = 0.6F)
+                )
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
@@ -169,7 +189,7 @@ fun ShowSettingDropDownMenu(
                     onClick = {
                         hideDialog(expanded, showDialog)
                         navController.navigate(
-                            when(text){
+                            when (text) {
                                 "About" -> WeatherScreens.AboutScreen.name
                                 "Favorites" -> WeatherScreens.FavoriteScreen.name
                                 else -> WeatherScreens.SettingsScreen.name

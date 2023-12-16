@@ -41,5 +41,5 @@ class FavoriteViewModel @Inject constructor(private val repository: WeatherDBRep
     fun deleteFavorite(favorite: Favorite) = viewModelScope.launch(Dispatchers.IO) {
         repository.deleteFavorite(favorite)
     }
-    
+
 }

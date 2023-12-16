@@ -1,6 +1,5 @@
 package com.devhp.firstcompose.widget
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -43,13 +42,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.devhp.firstcompose.navigation.WeatherScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherAppBar(
     title: String = "Title",
     navController: NavController,
-    icon: ImageVector? = null,
     navIcon: ImageVector = Icons.Default.ArrowBack,
     isMainScreen: Boolean = true,
     onAddActionClicked: () -> Unit = {},
@@ -152,12 +151,14 @@ fun ShowSettingDropDownMenu(
     ) {
         DropdownMenu(
             expanded = expanded.value,
-            onDismissRequest = { expanded.value = false },
+            onDismissRequest = {
+                hideDialog(expanded, showDialog)
+            },
             modifier = Modifier
                 .width(140.dp)
                 .background(Color.White)
         ) {
-            items.forEachIndexed { index, text ->
+            items.forEachIndexed { _, text ->
                 DropdownMenuItem(
                     text = {
                         Text(
@@ -166,9 +167,14 @@ fun ShowSettingDropDownMenu(
                         )
                     },
                     onClick = {
-                        expanded.value = false
-                        showDialog.value = false
-
+                        hideDialog(expanded, showDialog)
+                        navController.navigate(
+                            when(text){
+                                "About" -> WeatherScreens.AboutScreen.name
+                                "Favorites" -> WeatherScreens.FavoriteScreen.name
+                                else -> WeatherScreens.SettingsScreen.name
+                            }
+                        )
                     },
                     leadingIcon = {
                         Icon(
@@ -185,3 +191,10 @@ fun ShowSettingDropDownMenu(
 
     }
 }
+
+fun hideDialog(expanded: MutableState<Boolean>, showDialog: MutableState<Boolean>) {
+    expanded.value = false
+    showDialog.value = false
+}
+
+

@@ -39,7 +39,7 @@ fun SearchScreen(navController: NavController) {
         WeatherAppBar(
             title = "Search",
             navController = navController,
-            icon = Icons.Default.ArrowBack,
+            navIcon = Icons.Default.ArrowBack,
             isMainScreen = false,
         ) {
             navController.popBackStack()

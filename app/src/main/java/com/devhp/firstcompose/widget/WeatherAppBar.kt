@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +32,7 @@ fun WeatherAppBar(
     title: String = "Title",
     navController: NavController,
     icon: ImageVector? = null,
+    navIcon: ImageVector = Icons.Default.ArrowBack,
     isMainScreen: Boolean = true,
     onAddActionClicked: () -> Unit = {},
     onButtonClicked: () -> Unit = {}
@@ -47,12 +49,13 @@ fun WeatherAppBar(
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.secondary,
-                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 15.sp),
+                modifier = Modifier.padding(start = 20.dp)
             )
         },
         actions = {
             if (isMainScreen) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { onAddActionClicked.invoke() }) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search Icon",
@@ -67,19 +70,19 @@ fun WeatherAppBar(
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
-            } else Box {
-                if (icon != null) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = "icon",
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.clickable {
-                            onButtonClicked.invoke()
-                        })
-                }
             }
         },
-        navigationIcon = {},
+        navigationIcon = {
+          if(!isMainScreen){
+              Icon(
+                  imageVector = navIcon,
+                  contentDescription = "Navigation Icon",
+                  tint = MaterialTheme.colorScheme.secondary,
+                  modifier = Modifier.clickable {
+                      onButtonClicked.invoke()
+                  })
+          }
+        },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
     )
 }

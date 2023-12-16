@@ -30,7 +30,7 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
             coroutineScope {
                 data.value.loading = true
                 withContext(Dispatchers.IO){
-                    data.value = repository.getWeather("Seattle")
+                    data.value = repository.getWeather("Seattle", "imperial")
                 }
                 if(data.value.data != null) data.value.loading = false
             }
@@ -38,8 +38,8 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
 
     }
 
-    suspend fun getWeatherData(city: String): DataOrException<Weather, Boolean, Exception> {
-        return repository.getWeather(cityQuery = city)
+    suspend fun getWeatherData(city: String, units: String): DataOrException<Weather, Boolean, Exception> {
+        return repository.getWeather(cityQuery = city, units = units)
     }
 
 }

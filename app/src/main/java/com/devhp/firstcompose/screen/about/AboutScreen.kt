@@ -28,7 +28,10 @@ fun AboutScreen(navController: NavHostController) {
             navController = navController,
             title = "About",
             navIcon = Icons.Default.ArrowBack,
-            isMainScreen = false
+            isMainScreen = false,
+            onButtonClicked =  {
+                navController.popBackStack()
+            }
         )
     }) { paddingValues ->
         Surface(

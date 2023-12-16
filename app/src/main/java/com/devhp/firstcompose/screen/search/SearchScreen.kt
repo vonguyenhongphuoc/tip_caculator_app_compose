@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.devhp.firstcompose.navigation.WeatherScreens
 import com.devhp.firstcompose.widget.WeatherAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +51,14 @@ fun SearchScreen(navController: NavController) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Search...")
+                SearchBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {city ->
+                    navController.navigate(WeatherScreens.MainScreen.name + "/$city")
+                }
             }
         }
     }
@@ -59,7 +67,7 @@ fun SearchScreen(navController: NavController) {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchBar(onSearch: (String) -> Unit) {
+fun SearchBar(modifier: Modifier = Modifier, onSearch: (String) -> Unit) {
     val searchQueryState = rememberSaveable {
         mutableStateOf(" ")
     }
@@ -71,7 +79,12 @@ fun SearchBar(onSearch: (String) -> Unit) {
         CommonTextField(
             valueState = searchQueryState,
             placeHolder = "Seattle",
-            onAction = KeyboardActions { })
+            onAction = KeyboardActions {
+                if (!valid) return@KeyboardActions
+                onSearch(searchQueryState.value.trim())
+                searchQueryState.value = ""
+                keyBoardController?.hide()
+            })
     }
 }
 

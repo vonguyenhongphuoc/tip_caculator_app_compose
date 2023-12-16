@@ -6,7 +6,7 @@ import java.util.Locale
 
 fun formatDate(timestamp: Int): String {
     val sdf = SimpleDateFormat("EEE, MMM d", Locale.US)
-    val date = Date(timestamp.toLong())
+    val date = Date(timestamp.toLong() * 1000)
     return sdf.format(date)
 }
 

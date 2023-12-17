@@ -1,5 +1,6 @@
 package com.devhp.firstcompose.screen.setting
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -83,10 +84,10 @@ fun SettingsScreen(
                     checked = !unitToggleState,
                     onCheckedChange = {
                         unitToggleState = !it
-                        if (unitToggleState) {
-                            choiceState = "Imperial (F)"
+                        choiceState = if (unitToggleState) {
+                            "Imperial (F)"
                         } else {
-                            choiceState = "Metric (C)"
+                            "Metric (C)"
                         }
                     },
                     modifier = Modifier
@@ -102,6 +103,7 @@ fun SettingsScreen(
                 Button(
                     onClick = {
                         settingsViewModel.deleteAllUnits()
+                        Log.d("MyTag", "$choiceState")
                         settingsViewModel.insertUnit(UnitWeather(unit = choiceState))
 
                     },

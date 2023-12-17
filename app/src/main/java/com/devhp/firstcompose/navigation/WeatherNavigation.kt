@@ -31,11 +31,11 @@ fun WeatherNavigation() {
             navBack ->
             val city = navBack.arguments?.getString("city")
             val mainViewModel = hiltViewModel<MainViewModel>()
-            MainScreen(navController = navController, mainViewModel, city)
+            MainScreen(navController = navController, mainViewModel, city = city)
         }
         composable(mainRoute) {
             val mainViewModel = hiltViewModel<MainViewModel>()
-            MainScreen(navController = navController, mainViewModel, null)
+            MainScreen(navController = navController, mainViewModel, city = null)
         }
 
         composable(WeatherScreens.SearchScreen.name) {

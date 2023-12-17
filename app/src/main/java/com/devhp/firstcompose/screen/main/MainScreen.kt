@@ -72,23 +72,24 @@ fun MainScreen(
         mutableStateOf(city ?: "Moscow")
     }
 
-    if (unitFromDb.isNotEmpty()) {
+    if(unitFromDb.isNotEmpty()){
         unit = unitFromDb[0].unit.split(" ")[0]
-        isImperial = unit == "imperial"
-        /* Solution 2*/
-        val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
-            initialValue = DataOrException(
-                null,
-                true,
-                null
-            ), producer = {
-                value = mainViewModel.getWeatherData(mCity, units = unit)
-            }).value
-        if (weatherData.loading == true) {
-            CircularProgressIndicator()
-        } else if (weatherData.data != null) {
-            MainScaffold(weatherData.data!!, navController, isImperial = isImperial)
-        }
+    }
+
+    isImperial = unit == "imperial"
+    /* Solution 2*/
+    val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
+        initialValue = DataOrException(
+            null,
+            true,
+            null
+        ), producer = {
+            value = mainViewModel.getWeatherData(mCity, units = unit)
+        }).value
+    if (weatherData.loading == true) {
+        CircularProgressIndicator()
+    } else if (weatherData.data != null) {
+        MainScaffold(weatherData.data!!, navController, isImperial = isImperial)
     }
 
 

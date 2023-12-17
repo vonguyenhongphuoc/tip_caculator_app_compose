@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -106,4 +107,11 @@ dependencies {
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:$navVersion")
+
+    /*Firebase*/
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    // Auth
+    implementation("com.google.firebase:firebase-auth")
+    // Firestore
+    implementation("com.google.firebase:firebase-firestore")
 }

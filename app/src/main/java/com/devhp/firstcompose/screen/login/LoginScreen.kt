@@ -23,6 +23,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.devhp.firstcompose.R
 import com.devhp.firstcompose.component.EmailInput
@@ -44,10 +47,14 @@ import com.devhp.firstcompose.component.InputField
 import com.devhp.firstcompose.component.ReaderLogo
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hiltViewModel()) {
     val showLoginForm = rememberSaveable {
         mutableStateOf(true)
     }
+
+
+    val loadingState = viewModel.loading.observeAsState(false)
+
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -56,9 +63,11 @@ fun LoginScreen(navController: NavHostController) {
         ) {
             ReaderLogo()
             if (showLoginForm.value) UserForm(
-                isLoading = false,
+                isLoading = loadingState.value,
                 isCreateAccount = false
-            ) { email, password -> }
+            ) { email, password ->
+                viewModel.signInUserWithEmailAndPassword(email, password)
+            }
             else {
                 UserForm(isLoading = false, isCreateAccount = true) { email, password ->
                     Log.d("MyTag", "LoginScreen: $email - $password")
@@ -71,7 +80,7 @@ fun LoginScreen(navController: NavHostController) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val text = if (showLoginForm.value) "Sign up" else "Login"
+                val text = if (showLoginForm.value) "Register" else "Login"
                 Text(text = "New User?")
                 Text(text = text, modifier = Modifier
                     .clickable {

@@ -94,6 +94,8 @@ dependencies {
 
     //ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    //Live Data Compose
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
 
     // Kotlin Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")

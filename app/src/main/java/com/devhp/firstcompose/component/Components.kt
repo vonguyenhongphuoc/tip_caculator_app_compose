@@ -7,16 +7,19 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,7 +45,7 @@ fun EmailInput(
     labelId: String = "Email",
     enabled: Boolean = true,
     imeAction: ImeAction = ImeAction.Next,
-    onAction: KeyboardActions = KeyboardActions.Default
+    onAction: KeyboardActions = KeyboardActions.Default,
 ) {
     InputField(
         modifier = modifier,
@@ -66,7 +69,7 @@ fun InputField(
     keyboardType: KeyboardType = KeyboardType.Text,
     passwordVisibility: MutableState<Boolean>? = null,
     imeAction: ImeAction = ImeAction.Next,
-    onAction: KeyboardActions = KeyboardActions.Default
+    onAction: KeyboardActions = KeyboardActions.Default,
 ) {
     OutlinedTextField(
         value = valueState.value,
@@ -82,7 +85,7 @@ fun InputField(
         enabled = enabled,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         keyboardActions = onAction,
-        visualTransformation = if (passwordVisibility != null && !passwordVisibility.value) PasswordVisualTransformation() else VisualTransformation.None  ,
+        visualTransformation = if (passwordVisibility != null && !passwordVisibility.value) PasswordVisualTransformation() else VisualTransformation.None,
         trailingIcon = { if (passwordVisibility != null) PasswordVisibility(passwordVisibility = passwordVisibility) }
     )
 }
@@ -99,4 +102,31 @@ fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
             contentDescription = "VisibilityOff Icon"
         )
     }
+}
+
+@Composable
+fun ShowAlertDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogTitle: String,
+    dialogText: String,
+    icon: ImageVector,
+) {
+    AlertDialog(
+        onDismissRequest = { onDismissRequest() },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirmation()
+                onDismissRequest()
+            }) {
+                Text("Confirm")
+            }
+        },
+        icon = { Icon(imageVector = icon, contentDescription = "Dialog Icon") },
+        title = { Text(text = dialogTitle) },
+        text = {
+            Text(
+                text = dialogText
+            )
+        })
 }

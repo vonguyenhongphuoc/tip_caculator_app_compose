@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +26,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +47,8 @@ import com.devhp.firstcompose.R
 import com.devhp.firstcompose.component.EmailInput
 import com.devhp.firstcompose.component.InputField
 import com.devhp.firstcompose.component.ReaderLogo
+import com.devhp.firstcompose.component.ShowAlertDialog
+import com.devhp.firstcompose.navigation.ReaderScreens
 
 @Composable
 fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hiltViewModel()) {
@@ -52,44 +56,63 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hi
         mutableStateOf(true)
     }
 
-
     val loadingState = viewModel.loading.observeAsState(false)
-
+    val errorState = viewModel.error.observeAsState("")
 
     Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            ReaderLogo()
-            if (showLoginForm.value) UserForm(
-                isLoading = loadingState.value,
-                isCreateAccount = false
-            ) { email, password ->
-                viewModel.signInUserWithEmailAndPassword(email, password)
-            }
-            else {
-                UserForm(isLoading = false, isCreateAccount = true) { email, password ->
-                    Log.d("MyTag", "LoginScreen: $email - $password")
-                }
-            }
 
-            Spacer(modifier = Modifier.height(15.dp))
-            Row(
-                modifier = Modifier.padding(15.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+        Box {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
-                val text = if (showLoginForm.value) "Register" else "Login"
-                Text(text = "New User?")
-                Text(text = text, modifier = Modifier
-                    .clickable {
-                        showLoginForm.value = !showLoginForm.value
+                ReaderLogo()
+                if (showLoginForm.value) {
+                    UserForm(
+                        isLoading = loadingState.value,
+                        isCreateAccount = false
+                    ) { email, password ->
+                        viewModel.signInUserWithEmailAndPassword(email, password, onSuccess = {
+                            navController.navigate(ReaderScreens.HomeScreen.name)
+                        })
                     }
-                    .padding(5.dp), fontWeight = FontWeight.Bold)
-            }
+                } else {
+                    UserForm(isLoading = loadingState.value, isCreateAccount = true) { email, password ->
+                        Log.d("MyTag", "LoginScreen: $email - $password")
+                        viewModel.createUserWithEmailAndPassword(email, password, onSuccess = {
+                            navController.navigate(ReaderScreens.HomeScreen.name)
+                        })
+                    }
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                Row(
+                    modifier = Modifier.padding(15.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val text = if (showLoginForm.value) "Register" else "Login"
+                    Text(text = "New User?")
+                    Text(text = text, modifier = Modifier
+                        .clickable {
+                            showLoginForm.value = !showLoginForm.value
+                        }
+                        .padding(5.dp), fontWeight = FontWeight.Bold)
+                }
 
+
+            }
+            if (errorState.value.isNotEmpty()) {
+                ShowAlertDialog(
+                    onDismissRequest = { Log.d("MyTag", "onDismissRequest") },
+                    onConfirmation = { viewModel.resetError() },
+                    dialogTitle = "Error",
+                    dialogText = errorState.value,
+                    icon = Icons.Default.ErrorOutline
+                )
+            }
         }
+
+
     }
 }
 
@@ -98,7 +121,7 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hi
 fun UserForm(
     isLoading: Boolean = false,
     isCreateAccount: Boolean = false,
-    onDone: (String, String) -> Unit = { _, _ -> }
+    onDone: (String, String) -> Unit = { _, _ -> },
 ) {
     val email = rememberSaveable {
         mutableStateOf("")
@@ -155,6 +178,8 @@ fun UserForm(
             validInputs = valid
         ) {
             onDone(email.value.trim(), password.value.trim())
+            email.value = ""
+            password.value = ""
         }
 
 
@@ -186,7 +211,7 @@ fun PasswordInput(
     enabled: Boolean,
     passwordVisibility: MutableState<Boolean>,
     imeAction: ImeAction = ImeAction.Done,
-    onAction: KeyboardActions
+    onAction: KeyboardActions,
 ) {
     InputField(
         modifier = modifier,

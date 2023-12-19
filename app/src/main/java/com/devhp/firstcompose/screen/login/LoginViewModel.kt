@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devhp.firstcompose.model.MUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -92,9 +93,14 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     private fun createUser(displayName: String?) {
         val userID = auth.currentUser?.uid
-        val user = mutableMapOf<String, Any>()
-        user["user_id"] = userID.toString()
-        user["display_name"] = displayName.toString()
+        val user = MUser(
+            userID = userID.toString(),
+            displayName = displayName.toString(),
+            avatarUrl = "",
+            quote = "",
+            profession = "",
+            iD = null
+        ).toMap()
 
         FirebaseFirestore.getInstance().collection("users").add(user)
 

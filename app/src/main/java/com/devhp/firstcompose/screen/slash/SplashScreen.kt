@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.devhp.firstcompose.component.ReaderLogo
 import com.devhp.firstcompose.navigation.ReaderScreens
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
@@ -38,7 +39,11 @@ fun SplashScreen(navController: NavHostController) {
             OvershootInterpolator(8f).getInterpolation(it)
         }))
         delay(2000)
-        navController.navigate(ReaderScreens.LoginScreen.name)
+        if (!FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
+            navController.navigate(ReaderScreens.HomeScreen.name)
+        } else {
+            navController.navigate(ReaderScreens.LoginScreen.name)
+        }
 
     })
 

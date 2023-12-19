@@ -7,13 +7,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.devhp.firstcompose.navigation.ReaderScreens
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +46,7 @@ fun HomeScreen(navController: NavHostController) {
                 .fillMaxSize()
         ) {
 
+
         }
     }
 }
@@ -52,24 +58,36 @@ fun ReaderAppBar(
     showProfile: Boolean = true,
     navController: NavHostController,
 ) {
-    TopAppBar(title = {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (showProfile) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Logo Icon",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .scale(0.9f)
+    TopAppBar(
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (showProfile) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Logo Icon",
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .scale(0.9f)
+                    )
+                }
+                Text(
+                    text = title, color = Color.Red.copy(alpha = 0.7f), style =
+                    TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
                 )
-            }
-            Text(
-                text = title, color = Color.Red.copy(alpha = 0.7f), style =
-                TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            )
 
-        }
-    }, actions = {})
+            }
+        },
+        actions = {
+            IconButton(onClick = {
+                FirebaseAuth.getInstance().signOut().run {
+                    navController.navigate(ReaderScreens.LoginScreen.name)
+                }
+            }) {
+                Icon(imageVector = Icons.Filled.Logout, contentDescription = "Logout")
+            }
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent)
+    )
 }
 
 @Composable

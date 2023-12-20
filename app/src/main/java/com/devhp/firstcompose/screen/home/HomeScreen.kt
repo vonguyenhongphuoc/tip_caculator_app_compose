@@ -62,7 +62,7 @@ fun HomeScreen(navController: NavHostController) {
         topBar = {
             ReaderAppBar(title = "A.Reader", navController = navController)
         },
-        floatingActionButton = { FABContent(onTap = {}) }
+        floatingActionButton = { FABContent { navController.navigate(ReaderScreens.BookSearchScreen.name) } }
     ) { paddingValues ->
         Surface(
             modifier = Modifier
@@ -82,7 +82,7 @@ fun HomeContent(navController: NavHostController) {
         MBook("asddwqd", "Hello", "All of us", null),
         MBook("sfsdfsdf", "Again", "All of us", null),
         MBook("ad121sdf", "Again Again", "All of us", null),
-        )
+    )
 
     val email = FirebaseAuth.getInstance().currentUser?.email
     val currentUserName = if (!email.isNullOrEmpty()) email.split("@")[0] else "N/A"

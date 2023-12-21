@@ -1,12 +1,14 @@
 package com.devhp.firstcompose.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devhp.firstcompose.screen.home.HomeScreen
 import com.devhp.firstcompose.screen.login.LoginScreen
 import com.devhp.firstcompose.screen.search.BookSearchScreen
+import com.devhp.firstcompose.screen.search.BookSearchViewModel
 import com.devhp.firstcompose.screen.slash.SplashScreen
 import com.devhp.firstcompose.screen.stat.StatScreen
 
@@ -27,7 +29,8 @@ fun ReaderNavigation() {
             StatScreen(navController = navController)
         }
         composable(ReaderScreens.BookSearchScreen.name) {
-            BookSearchScreen(navController = navController)
+            val viewModel = hiltViewModel<BookSearchViewModel>()
+            BookSearchScreen(navController = navController, viewModel = viewModel)
         }
 
     }

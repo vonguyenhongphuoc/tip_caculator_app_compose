@@ -9,7 +9,7 @@ data class VolumeInfo(
     @SerializedName("authors")
     val authors: List<String?>? = listOf(),
     @SerializedName("averageRating")
-    val averageRating: Int? = 0,
+    val averageRating: Double? = 0.0,
     @SerializedName("canonicalVolumeLink")
     val canonicalVolumeLink: String? = "",
     @SerializedName("categories")

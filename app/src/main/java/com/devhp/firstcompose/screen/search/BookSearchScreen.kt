@@ -1,6 +1,9 @@
 package com.devhp.firstcompose.screen.search
 
+import android.graphics.Paint.Align
+import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,11 +22,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,22 +38,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.devhp.firstcompose.R
 import com.devhp.firstcompose.component.InputField
 import com.devhp.firstcompose.component.ReaderAppBar
-import com.devhp.firstcompose.model.MBook
+import com.devhp.firstcompose.model.Item
 import com.devhp.firstcompose.navigation.ReaderScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookSearchScreen(
     navController: NavController,
-    viewModel: BookSearchViewModel = hiltViewModel()
+    viewModel: BookSearchViewModel,
 ) {
     Scaffold(topBar = {
         ReaderAppBar(
@@ -66,45 +71,48 @@ fun BookSearchScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp), viewModel = viewModel
-                ) {
-                    query -> viewModel.searchBooks(query)
+                ) { query ->
+                    viewModel.searchBooks(query)
                 }
 
                 Spacer(modifier = Modifier.height(13.dp))
-                BookList(navController)
+                BookList(navController, viewModel)
             }
         }
     }
 }
 
 @Composable
-fun BookList(navController: NavController) {
+fun BookList(navController: NavController, viewModel: BookSearchViewModel) {
 
-    val listOfBooks = listOf(
-        MBook("asdf", "Hello Again", "All of us", null),
-        MBook("asddwqd", "Hello", "All of us", null),
-        MBook("sfsdfsdf", "Again", "All of us", null),
-        MBook("ad121sdf", "Again Again", "All of us", null),
-    )
+    val listOfBooks = viewModel.list
 
-
-    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
-        items(items = listOfBooks) { book ->
-            BookRow(book, navController)
+    Log.d("BooksListView", "Recomposition: ${listOfBooks}")
+    val isLoading = viewModel.isLoading.collectAsState().value
+    if(isLoading){
+        Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            LinearProgressIndicator()
+        }
+    }else {
+        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
+            items(items = listOfBooks) { book ->
+                BookRow(book, navController)
+            }
         }
     }
+
+
+
 }
 
 @Composable
-fun BookRow(book: MBook, navController: NavController) {
+fun BookRow(book: Item, navController: NavController) {
     Card(modifier = Modifier
         .clickable { }
         .fillMaxWidth()
-        .height(100.dp)
         .padding(3.dp), shape = RectangleShape, elevation = CardDefaults.cardElevation(7.dp)) {
         Row(modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.Top) {
-            val imageUrl =
-                "http://books.google.com/books/content?id=ex-tDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            val imageUrl = book.volumeInfo?.imageLinks?.smallThumbnail
             AsyncImage(
                 model = imageUrl, contentDescription = "book image", placeholder = painterResource(
                     id = R.drawable.ic_android_black_24dp
@@ -112,15 +120,30 @@ fun BookRow(book: MBook, navController: NavController) {
                 ), modifier = Modifier
                     .width(80.dp)
                     .fillMaxHeight()
-                    .padding(end = 4.dp)
+                    .padding(end = 4.dp),
+                error = painterResource(id = R.drawable.baseline_error_24)
             )
-            Column {
-                Text(text = book.title.toString(), overflow = TextOverflow.Ellipsis)
+            Column(modifier = Modifier.padding(start = 10.dp)) {
+                Text(text = book.volumeInfo?.title.toString(), overflow = TextOverflow.Ellipsis)
                 Text(
-                    text = "Author ${book.authors}",
+                    text = "Author ${book.volumeInfo?.authors}",
                     overflow = TextOverflow.Clip,
+                    fontStyle = FontStyle.Italic,
                     style = MaterialTheme.typography.bodyLarge
                 )
+                Text(
+                    text = "${book.volumeInfo?.categories}",
+                    overflow = TextOverflow.Clip,
+                    fontStyle = FontStyle.Italic,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = "Date ${book.volumeInfo?.publishedDate}",
+                    overflow = TextOverflow.Clip,
+                    fontStyle = FontStyle.Italic,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
             }
         }
     }

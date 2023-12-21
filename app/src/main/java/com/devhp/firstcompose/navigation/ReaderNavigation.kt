@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.devhp.firstcompose.screen.detail.BookDetailScreen
+import com.devhp.firstcompose.screen.detail.DetailsViewModel
 import com.devhp.firstcompose.screen.home.HomeScreen
 import com.devhp.firstcompose.screen.login.LoginScreen
 import com.devhp.firstcompose.screen.search.BookSearchScreen
@@ -40,7 +41,12 @@ fun ReaderNavigation() {
             type = NavType.StringType
         })) { backStackEntry ->
             backStackEntry.arguments?.getString("bookID").let {
-                BookDetailScreen(navController = navController, bookID = it.toString())
+                val viewModel = hiltViewModel<DetailsViewModel>()
+                BookDetailScreen(
+                    navController = navController,
+                    bookID = it.toString(),
+                    viewModel = viewModel
+                )
             }
 
         }

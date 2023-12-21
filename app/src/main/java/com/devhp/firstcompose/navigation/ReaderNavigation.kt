@@ -2,9 +2,12 @@ package com.devhp.firstcompose.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.devhp.firstcompose.screen.detail.BookDetailScreen
 import com.devhp.firstcompose.screen.home.HomeScreen
 import com.devhp.firstcompose.screen.login.LoginScreen
 import com.devhp.firstcompose.screen.search.BookSearchScreen
@@ -31,6 +34,15 @@ fun ReaderNavigation() {
         composable(ReaderScreens.BookSearchScreen.name) {
             val viewModel = hiltViewModel<BookSearchViewModel>()
             BookSearchScreen(navController = navController, viewModel = viewModel)
+        }
+        val detailScreenName = ReaderScreens.BookDetailScreen.name
+        composable("$detailScreenName/{bookID}", arguments = listOf(navArgument("bookID") {
+            type = NavType.StringType
+        })) { backStackEntry ->
+            backStackEntry.arguments?.getString("bookID").let {
+                BookDetailScreen(navController = navController, bookID = it.toString())
+            }
+
         }
 
     }

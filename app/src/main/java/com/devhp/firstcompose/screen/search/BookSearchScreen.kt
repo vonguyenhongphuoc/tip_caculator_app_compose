@@ -89,11 +89,11 @@ fun BookList(navController: NavController, viewModel: BookSearchViewModel) {
 
     Log.d("BooksListView", "Recomposition: ${listOfBooks}")
     val isLoading = viewModel.isLoading.collectAsState().value
-    if(isLoading){
-        Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             LinearProgressIndicator()
         }
-    }else {
+    } else {
         LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
             items(items = listOfBooks) { book ->
                 BookRow(book, navController)
@@ -102,13 +102,14 @@ fun BookList(navController: NavController, viewModel: BookSearchViewModel) {
     }
 
 
-
 }
 
 @Composable
 fun BookRow(book: Item, navController: NavController) {
     Card(modifier = Modifier
-        .clickable { }
+        .clickable {
+            navController.navigate(ReaderScreens.BookDetailScreen.name + "/${book.id}")
+        }
         .fillMaxWidth()
         .padding(3.dp), shape = RectangleShape, elevation = CardDefaults.cardElevation(7.dp)) {
         Row(modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.Top) {

@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.devhp.firstcompose.screen.detail.BookDetailScreen
 import com.devhp.firstcompose.screen.detail.DetailsViewModel
 import com.devhp.firstcompose.screen.home.HomeScreen
+import com.devhp.firstcompose.screen.home.HomeScreenViewModel
 import com.devhp.firstcompose.screen.login.LoginScreen
 import com.devhp.firstcompose.screen.search.BookSearchScreen
 import com.devhp.firstcompose.screen.search.BookSearchViewModel
@@ -27,7 +28,8 @@ fun ReaderNavigation() {
             LoginScreen(navController = navController)
         }
         composable(ReaderScreens.HomeScreen.name) {
-            HomeScreen(navController = navController)
+            val viewModel = hiltViewModel<HomeScreenViewModel>()
+            HomeScreen(navController = navController, viewModel)
         }
         composable(ReaderScreens.StatScreen.name) {
             StatScreen(navController = navController)
@@ -50,6 +52,7 @@ fun ReaderNavigation() {
             }
 
         }
+
 
     }
 }

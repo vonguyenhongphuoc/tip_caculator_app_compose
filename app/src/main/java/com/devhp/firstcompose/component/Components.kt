@@ -294,7 +294,7 @@ fun ListCard(
         ) {
             Row(horizontalArrangement = Arrangement.Center) {
                 AsyncImage(
-                    model = "http://books.google.com/books/content?id=ex-tDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+                    model = book.photoUrl,
                     contentDescription = null,
                     modifier = Modifier
                         .height(140.dp)

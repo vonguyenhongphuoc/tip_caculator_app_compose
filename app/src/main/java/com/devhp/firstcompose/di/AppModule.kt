@@ -2,7 +2,9 @@ package com.devhp.firstcompose.di
 
 import com.devhp.firstcompose.network.BooksApi
 import com.devhp.firstcompose.repository.BookRepository
+import com.devhp.firstcompose.repository.FireRepository
 import com.devhp.firstcompose.util.Constants
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,15 +17,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Singleton
     @Provides
     fun provideBookApi(): BooksApi {
         return Retrofit.Builder().baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create()).build().create(BooksApi::class.java)
     }
-
     @Singleton
     @Provides
     fun provideBookRepository(api: BooksApi) = BookRepository(api)
+
+    @Singleton
+    @Provides
+    fun provideFireBookRepository() = FireRepository(queryBook = FirebaseFirestore.getInstance().collection("books"))
+
 }

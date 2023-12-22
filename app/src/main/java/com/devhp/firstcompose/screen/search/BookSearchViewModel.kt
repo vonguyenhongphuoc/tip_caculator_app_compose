@@ -26,6 +26,7 @@ class BookSearchViewModel @Inject constructor(private val repository: BookReposi
 
 
     init {
+        Log.d("MyTag", "BookSearchViewModel Init")
         loadBooks()
     }
 

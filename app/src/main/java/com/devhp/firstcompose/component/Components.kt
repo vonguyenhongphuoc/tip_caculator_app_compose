@@ -57,7 +57,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.devhp.firstcompose.R
 import com.devhp.firstcompose.model.MBook
@@ -269,7 +268,7 @@ fun FABContent(onTap: () -> Unit) {
 
 @Composable
 fun ListCard(
-    book: MBook = MBook("asdf", "Running", "Me And You", "Hello World"),
+    book: MBook,
     onPressDetails: (String) -> Unit,
 ) {
     val context = LocalContext.current
@@ -286,7 +285,7 @@ fun ListCard(
             .padding(16.dp)
             .height(242.dp)
             .width(202.dp)
-            .clickable { onPressDetails(book.title.toString()) }
+            .clickable { onPressDetails(book.id.toString()) }
     ) {
         Column(
             modifier = Modifier.width(screenWidth.dp - (spacing * 2)),
@@ -327,7 +326,9 @@ fun ListCard(
             Text(
                 text = book.authors.toString(),
                 modifier = Modifier.padding(4.dp),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
         Row(

@@ -24,7 +24,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,12 +45,27 @@ import com.devhp.firstcompose.data.Resource
 import com.devhp.firstcompose.model.Item
 import com.devhp.firstcompose.model.MBook
 import com.devhp.firstcompose.navigation.ReaderScreens
+import com.devhp.firstcompose.screen.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookDetailScreen(navController: NavController, bookID: String, viewModel: DetailsViewModel) {
+fun BookDetailScreen(
+    navController: NavController,
+    bookID: String,
+    viewModel: DetailsViewModel,
+    sharedViewModel: SharedViewModel
+) {
+
+    LaunchedEffect(key1 = true, block =
+    {
+        Log.d("BookDetailScreen", "BookID: $bookID")
+        sharedViewModel.getBookInfo(bookID)
+    })
+
+    val bookInfo = sharedViewModel.bookInfo.collectAsState().value
+
     Scaffold(
         topBar = {
             ReaderAppBar(
@@ -73,13 +89,6 @@ fun BookDetailScreen(navController: NavController, bookID: String, viewModel: De
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val bookInfo = produceState<com.devhp.firstcompose.data.Resource<Item>>(
-                    initialValue = com.devhp.firstcompose.data.Resource.Loading(),
-                    producer = {
-                        value = viewModel.getBookInfo(bookID)
-                    }
-                ).value
-
                 if (bookInfo.data == null) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Row {
@@ -91,7 +100,6 @@ fun BookDetailScreen(navController: NavController, bookID: String, viewModel: De
                 } else {
                     ShowBookDetails(bookInfo, navController)
                 }
-
 
             }
 

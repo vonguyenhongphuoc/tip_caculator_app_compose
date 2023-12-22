@@ -17,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(private val repository: FireRepository) :
     ViewModel() {
+
     val data = MutableStateFlow<DataOrException<List<MBook>, Boolean, Exception>>(
         DataOrException(
             emptyList(), true, null
@@ -24,6 +25,7 @@ class HomeScreenViewModel @Inject constructor(private val repository: FireReposi
     )
 
     init {
+        Log.d("MyTag", "HomeScreenViewModel Init")
         getAllBooksFromDatabase()
     }
 
@@ -35,5 +37,10 @@ class HomeScreenViewModel @Inject constructor(private val repository: FireReposi
             Log.d("MyTag", "getAllBooksFromDatabase: ${data.value.data?.toList().toString()}")
         }
 
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("MyTag", "HomeScreenViewModel onCleared")
     }
 }

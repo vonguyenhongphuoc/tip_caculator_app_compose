@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.devhp.firstcompose.component.FABContent
 import com.devhp.firstcompose.component.ListCard
@@ -43,7 +45,11 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController, viewModel: HomeScreenViewModel) {
+fun HomeScreen(navController: NavHostController, viewModel: HomeScreenViewModel = hiltViewModel()) {
+
+    DisposableEffect(key1 = Unit, effect = {
+        onDispose { Log.d("MyTag", "HomeScreen Cleared") }
+    })
     Scaffold(
         topBar = {
             ReaderAppBar(title = "A.Reader", navController = navController)
@@ -64,19 +70,17 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeScreenViewModel)
 fun HomeContent(navController: NavHostController, viewModel: HomeScreenViewModel) {
 
     val data = viewModel.data.collectAsState().value
-    var listOfBooks = emptyList<MBook>()
+    val listOfBooks: List<MBook>
     val currentUser = FirebaseAuth.getInstance().currentUser
 
-    if(data.loading!!){
+    if (data.loading!!) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
-    }else {
-        Log.d("HomeContent", data.data!!.toList().toString())
-        listOfBooks = data.data!!.toList().filter {
-            mBook -> mBook.userId == currentUser?.uid.toString()
+    } else {
+        listOfBooks = data.data!!.toList().filter { mBook ->
+            mBook.userId == currentUser?.uid.toString()
         }
-        Log.d("HomeContentlistOfBooks", listOfBooks.toString())
         val email = FirebaseAuth.getInstance().currentUser?.email
         val currentUserName = if (!email.isNullOrEmpty()) email.split("@")[0] else "N/A"
 
@@ -110,7 +114,7 @@ fun HomeContent(navController: NavHostController, viewModel: HomeScreenViewModel
 
             }
 
-            ReadingRightNowArea(books = listOf(), navController = navController)
+            ReadingRightNowArea(books = listOfBooks, navController = navController)
 
             TitleSection(label = "Reading List")
 
@@ -123,13 +127,17 @@ fun HomeContent(navController: NavHostController, viewModel: HomeScreenViewModel
 
 @Composable
 fun ReadingRightNowArea(books: List<MBook>, navController: NavHostController) {
-    ListCard(onPressDetails = {})
+    for (book in books) {
+        ListCard(book) {
+            navController.navigate(ReaderScreens.BookUpdateScreen.name + "/$it")
+        }
+    }
 }
 
 @Composable
 fun BookListArea(listOfBooks: List<MBook>, navController: NavHostController) {
     HorizontalScrollComponent(listOfBooks) {
-
+        navController.navigate(ReaderScreens.BookUpdateScreen.name + "/$it")
     }
 }
 
@@ -144,7 +152,7 @@ fun HorizontalScrollComponent(listOfBooks: List<MBook>, onCardPressed: (String) 
             .horizontalScroll(scrollState)
     ) {
         for (book in listOfBooks) {
-            ListCard {
+            ListCard(book) {
                 onCardPressed(it)
             }
         }

@@ -1,8 +1,9 @@
 package com.devhp.firstcompose.navigation
 
 import android.util.Log
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,14 +21,17 @@ import com.devhp.firstcompose.screen.search.BookSearchViewModel
 import com.devhp.firstcompose.screen.slash.SplashScreen
 import com.devhp.firstcompose.screen.stat.StatScreen
 import com.devhp.firstcompose.screen.update.BookUpdateScreen
+import com.devhp.firstcompose.screen.update.UpdateViewModel
 
 @Composable
 fun ReaderNavigation() {
     val navController = rememberNavController()
     val sharedViewModel = hiltViewModel<SharedViewModel>()
-    val bookSearchViewModel = hiltViewModel<BookSearchViewModel>()
+    val homeViewModel = hiltViewModel<HomeScreenViewModel>()
 
-    NavHost(navController = navController, startDestination = ReaderScreens.SplashScreen.name) {
+    NavHost(navController = navController, startDestination = ReaderScreens.SplashScreen.name,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }) {
         Log.d("MyTag", "NavHost Init")
         composable(ReaderScreens.SplashScreen.name) {
             SplashScreen(navController = navController)
@@ -36,13 +40,23 @@ fun ReaderNavigation() {
             LoginScreen(navController = navController)
         }
         composable(ReaderScreens.HomeScreen.name) {
-            val viewModel = hiltViewModel<HomeScreenViewModel>()
-            HomeScreen(navController = navController)
+//            entry.savedStateHandle.get<Boolean>("refresh_data").let {
+//                if (it == true){
+//                    homeViewModel.getAllBooksFromDatabase()
+//                }
+//                entry.savedStateHandle.remove<String>("refresh_data")
+//            }
+
+            HomeScreen(
+                navController = navController,
+                homeViewModel
+            )
         }
         composable(ReaderScreens.StatScreen.name) {
             StatScreen(navController = navController)
         }
         composable(ReaderScreens.BookSearchScreen.name) {
+            val bookSearchViewModel = hiltViewModel<BookSearchViewModel>()
             BookSearchScreen(navController = navController, viewModel = bookSearchViewModel)
         }
         val detailScreenName = ReaderScreens.BookDetailScreen.name
@@ -61,13 +75,17 @@ fun ReaderNavigation() {
 
         }
 
-        val updateScreenName= ReaderScreens.BookUpdateScreen.name
-        composable("$updateScreenName/{bookID}", arguments = listOf(navArgument("bookID"){
+        val updateScreenName = ReaderScreens.BookUpdateScreen.name
+        composable("$updateScreenName/{documentID}", arguments = listOf(navArgument("documentID") {
             type = NavType.StringType
-        })){
-            backStackEntry ->
-            backStackEntry.arguments?.getString("bookID").let {
-                BookUpdateScreen(navController = navController, bookID = it.toString())
+        })) { backStackEntry ->
+            val updateViewModel = hiltViewModel<UpdateViewModel>()
+            backStackEntry.arguments?.getString("documentID").let {
+                BookUpdateScreen(
+                    navController = navController,
+                    updateViewModel = updateViewModel,
+                    documentID = it.toString()
+                )
             }
         }
 

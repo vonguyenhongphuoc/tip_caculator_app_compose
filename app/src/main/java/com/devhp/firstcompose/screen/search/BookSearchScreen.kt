@@ -62,7 +62,8 @@ fun BookSearchScreen(
             icon = Icons.Default.ArrowBack,
             showProfile = false
         ) {
-            navController.navigate(ReaderScreens.HomeScreen.name)
+//            navController.previousBackStackEntry?.savedStateHandle?.set("refresh_data", true)
+            navController.popBackStack()
         }
     }) { paddingValues ->
         Surface(modifier = Modifier.padding(paddingValues)) {

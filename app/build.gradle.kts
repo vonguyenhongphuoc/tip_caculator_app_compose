@@ -31,6 +31,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -115,5 +116,7 @@ dependencies {
     // Auth
     implementation("com.google.firebase:firebase-auth")
     // Firestore
-    implementation("com.google.firebase:firebase-firestore")
+//    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
 }

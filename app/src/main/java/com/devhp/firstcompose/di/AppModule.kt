@@ -4,7 +4,8 @@ import com.devhp.firstcompose.network.BooksApi
 import com.devhp.firstcompose.repository.BookRepository
 import com.devhp.firstcompose.repository.FireRepository
 import com.devhp.firstcompose.util.Constants
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +30,6 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideFireBookRepository() = FireRepository(queryBook = FirebaseFirestore.getInstance().collection("books"))
+    fun provideFireBookRepository() = FireRepository(queryBook = Firebase.firestore.collection("books"))
 
 }

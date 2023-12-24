@@ -24,6 +24,7 @@ class SharedViewModel @Inject constructor(private val bookRepository: BookReposi
     }
 
     suspend fun getBookInfo(bookID: String) {
+        Log.d("MyTag", "BookID: $bookID")
         viewModelScope.launch(Dispatchers.IO) {
             _bookInfo.value = bookRepository.getBookInfo(bookID)
             Log.d("getBookInfo", "${bookInfo.value.data}")

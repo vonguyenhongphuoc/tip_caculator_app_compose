@@ -74,7 +74,7 @@ fun BookDetailScreen(
                 icon = Icons.Default.ArrowBack,
                 showProfile = false
             ) {
-                navController.navigate(ReaderScreens.BookSearchScreen.name)
+                navController.popBackStack()
             }
         }
     ) { paddingValues ->
@@ -109,7 +109,7 @@ fun BookDetailScreen(
 
 @Composable
 fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
-    val bookData = bookInfo?.data?.volumeInfo
+    val bookData = bookInfo.data?.volumeInfo
     val googleBookID = bookInfo.data?.id
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(5.dp)) {
 

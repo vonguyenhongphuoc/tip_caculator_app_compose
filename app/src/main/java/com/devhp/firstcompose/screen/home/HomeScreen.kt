@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,13 +29,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.devhp.firstcompose.component.FABContent
 import com.devhp.firstcompose.component.ListCard
@@ -45,16 +47,26 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController, viewModel: HomeScreenViewModel = hiltViewModel()) {
+fun HomeScreen(navController: NavHostController, viewModel: HomeScreenViewModel) {
+
+//    LaunchedEffect(key1 = Unit, block = {
+//        viewModel.getAllBooksFromDatabase()
+//    })
 
     DisposableEffect(key1 = Unit, effect = {
-        onDispose { Log.d("MyTag", "HomeScreen Cleared") }
+        onDispose {
+            Log.d("MyTag", "HomeScreen Cleared")
+        }
     })
     Scaffold(
         topBar = {
             ReaderAppBar(title = "A.Reader", navController = navController)
         },
-        floatingActionButton = { FABContent { navController.navigate(ReaderScreens.BookSearchScreen.name) } }
+        floatingActionButton = {
+            FABContent {
+                navController.navigate(ReaderScreens.BookSearchScreen.name)
+            }
+        }
     ) { paddingValues ->
         Surface(
             modifier = Modifier
@@ -71,7 +83,10 @@ fun HomeContent(navController: NavHostController, viewModel: HomeScreenViewModel
 
     val data = viewModel.data.collectAsState().value
     val listOfBooks: List<MBook>
-    val currentUser = FirebaseAuth.getInstance().currentUser
+    val currentUser = remember {
+        FirebaseAuth.getInstance().currentUser
+    }
+    val columScrollState = rememberScrollState()
 
     if (data.loading!!) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -114,11 +129,19 @@ fun HomeContent(navController: NavHostController, viewModel: HomeScreenViewModel
 
             }
 
-            ReadingRightNowArea(books = listOfBooks, navController = navController)
+            Column(
+                modifier = Modifier
+                    .height(400.dp)
+                    .verticalScroll(columScrollState)
+            ) {
+                ReadingRightNowArea(books = listOfBooks, navController = navController)
+            }
 
             TitleSection(label = "Reading List")
 
+
             BookListArea(listOfBooks = listOfBooks, navController = navController)
+
         }
     }
 

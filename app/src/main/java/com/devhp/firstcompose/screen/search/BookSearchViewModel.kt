@@ -21,9 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class BookSearchViewModel @Inject constructor(private val repository: BookRepository) :
     ViewModel() {
+
     var list: List<Item> by mutableStateOf(listOf())
     var isLoading = MutableStateFlow(true)
-
 
     init {
         Log.d("MyTag", "BookSearchViewModel Init")
@@ -62,6 +62,11 @@ class BookSearchViewModel @Inject constructor(private val repository: BookReposi
             }
 
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("MyTag", "BookSearchViewModel onCleared")
     }
 
 }

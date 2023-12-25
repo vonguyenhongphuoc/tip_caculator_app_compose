@@ -120,7 +120,6 @@ fun BookUpdateScreen(
                             Log.d("MyTag", "Show star: ${ratingVal.intValue}")
                         }
                     }
-
                 }
             }
         }

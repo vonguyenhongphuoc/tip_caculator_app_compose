@@ -56,6 +56,7 @@ android {
 
 
 dependencies {
+    implementation("com.google.firebase:firebase-messaging:23.4.0")
     val roomVersion = "2.6.1"
     val hiltVersion  = "2.48"
     val hiltViewmodel = "1.1.0"
@@ -119,4 +120,6 @@ dependencies {
 //    implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-firestore-ktx")
 
+
+    implementation("com.google.firebase:firebase-functions")
 }

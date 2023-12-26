@@ -1,8 +1,6 @@
 package com.devhp.firstcompose
 
 
-
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,7 +35,6 @@ class MainActivity : ComponentActivity() {
             color = MaterialTheme.colorScheme.background,
             modifier = Modifier
                 .fillMaxSize()
-
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,

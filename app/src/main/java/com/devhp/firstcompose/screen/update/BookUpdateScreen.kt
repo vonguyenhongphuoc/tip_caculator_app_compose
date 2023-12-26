@@ -1,7 +1,9 @@
 package com.devhp.firstcompose.screen.update
 
+import android.content.Context
 import android.util.Log
 import android.view.MotionEvent
+import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -48,6 +50,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,8 +60,12 @@ import coil.compose.AsyncImage
 import com.devhp.firstcompose.R
 import com.devhp.firstcompose.component.InputField
 import com.devhp.firstcompose.component.ReaderAppBar
+import com.devhp.firstcompose.component.RoundedButton
 import com.devhp.firstcompose.data.DataOrException
 import com.devhp.firstcompose.model.MBook
+import com.devhp.firstcompose.util.formatDate
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,8 +77,9 @@ fun BookUpdateScreen(
     LaunchedEffect(key1 = Unit, block = {
         updateViewModel.getBookByDocumentID(documentID)
     })
+    val context = LocalContext.current
     val bookInfo = updateViewModel.data.collectAsState().value
-    val notesState = rememberSaveable {
+    val notesState = rememberSaveable(bookInfo.data?.notes) {
         mutableStateOf(bookInfo.data?.notes ?: "No thoughts available :(")
     }
     val isStartedReading = rememberSaveable {
@@ -120,12 +128,55 @@ fun BookUpdateScreen(
                             Log.d("MyTag", "Show star: ${ratingVal.intValue}")
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Row {
+                        val changeNotes = bookInfo.data?.notes != notesState.value
+                        val changedRating = bookInfo.data?.rating?.toInt() != ratingVal.intValue
+                        val isFinishedTimeStamp =
+                            if (isFinishedReading.value) Timestamp.now() else bookInfo.data?.finishedReading
+                        val isStartedTimeStamp =
+                            if (isStartedReading.value) Timestamp.now() else bookInfo.data?.startedReading
+
+                        val bookUpdate =
+                            changeNotes || changedRating || isStartedReading.value || isFinishedReading.value
+
+                        val bookToUpdate = hashMapOf(
+                            "finished_reading_at" to isFinishedTimeStamp,
+                            "started_reading_at" to isStartedTimeStamp,
+                            "rating" to ratingVal.intValue,
+                            "notes" to notesState.value
+                        ).toMap()
+
+                        RoundedButton(label = "Update") {
+                            if (bookUpdate) {
+                                FirebaseFirestore.getInstance().collection("books")
+                                    .document(bookInfo.data!!.id!!)
+                                    .update(bookToUpdate)
+                                    .addOnCompleteListener {task ->
+                                        showToast(context, "Book Updated Successfully")
+                                        Log.d("MyTag", "ShowSimpleForm: ${task.result}")
+                                        navController.popBackStack()
+                                    }.addOnFailureListener {
+                                        Log.d("Error", "Error updating document", it)
+                                    }
+                            }
+
+
+                        }
+                        Spacer(modifier = Modifier.width(100.dp))
+                        RoundedButton(label = "Delete")
+                    }
                 }
             }
         }
 
     }
 
+}
+
+fun showToast(context: Context, msg: String) {
+    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -208,7 +259,7 @@ fun UpdateReadingAndFinishedArea(
                     )
                 }
             } else {
-                Text(text = "Started on: ${bookInfo.data?.startedReading}") //Todo: format data
+                Text(text = "Started on: ${formatDate(bookInfo.data?.startedReading!!)}")
             }
         }
         Spacer(modifier = Modifier.height(4.dp))
@@ -223,7 +274,7 @@ fun UpdateReadingAndFinishedArea(
                     Text(text = "Finished Reading!")
                 }
             } else {
-                Text(text = "Finished on: ${bookInfo.data?.finishedReading}") //Todo: format data
+                Text(text = "Finished on: ${formatDate(bookInfo.data?.finishedReading!!)}")
             }
         }
     }

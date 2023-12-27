@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -52,6 +53,7 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -153,7 +155,7 @@ fun BookUpdateScreen(
                                 FirebaseFirestore.getInstance().collection("books")
                                     .document(bookInfo.data!!.id!!)
                                     .update(bookToUpdate)
-                                    .addOnCompleteListener {task ->
+                                    .addOnCompleteListener { task ->
                                         showToast(context, "Book Updated Successfully")
                                         Log.d("MyTag", "ShowSimpleForm: ${task.result}")
                                         navController.popBackStack()
@@ -161,16 +163,61 @@ fun BookUpdateScreen(
                                         Log.d("Error", "Error updating document", it)
                                     }
                             }
-
-
                         }
                         Spacer(modifier = Modifier.width(100.dp))
-                        RoundedButton(label = "Delete")
+                        val openDialog = remember {
+                            mutableStateOf(false)
+                        }
+
+                        if (openDialog.value) {
+                            ShowAlertDialog(
+                                message = stringResource(id = R.string.sure) + "\n" + stringResource(
+                                    id = R.string.action
+                                ),
+                                openDialog = openDialog,
+                                onYesPressed = {
+                                    FirebaseFirestore.getInstance().collection("books")
+                                        .document(bookInfo.data!!.id!!).delete()
+                                        .addOnCompleteListener {
+                                            if(it.isSuccessful){
+                                                openDialog.value = false
+                                                navController.popBackStack()
+                                            }
+                                        }
+                                        .addOnFailureListener {
+                                            Log.d("Firebase Error: ", it.message.toString())
+                                        }
+                                }
+                            )
+                        }
+
+                        RoundedButton(label = "Delete"){
+                            openDialog.value = true
+                        }
                     }
                 }
             }
         }
 
+    }
+
+}
+
+@Composable
+fun ShowAlertDialog(message: String, openDialog: MutableState<Boolean>, onYesPressed: () -> Unit) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            confirmButton = {
+                TextButton(onClick = { onYesPressed.invoke() }) {
+                    Text(text = "Yes")
+                }
+            },
+            dismissButton = {
+                openDialog.value = false
+            },
+            title = { Text(text = "Delete Book") },
+            text = { Text(text = message) })
     }
 
 }

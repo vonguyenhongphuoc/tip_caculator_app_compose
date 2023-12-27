@@ -95,6 +95,10 @@ fun BookUpdateScreen(
         mutableIntStateOf(0)
     }
 
+    val openDialog = remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(topBar = {
         ReaderAppBar(
             title = "Update Book",
@@ -165,9 +169,8 @@ fun BookUpdateScreen(
                             }
                         }
                         Spacer(modifier = Modifier.width(100.dp))
-                        val openDialog = remember {
-                            mutableStateOf(false)
-                        }
+
+                        Log.d("MyTag opendialog", "${openDialog.value}")
 
                         if (openDialog.value) {
                             ShowAlertDialog(
@@ -179,7 +182,7 @@ fun BookUpdateScreen(
                                     FirebaseFirestore.getInstance().collection("books")
                                         .document(bookInfo.data!!.id!!).delete()
                                         .addOnCompleteListener {
-                                            if(it.isSuccessful){
+                                            if (it.isSuccessful) {
                                                 openDialog.value = false
                                                 navController.popBackStack()
                                             }
@@ -191,7 +194,7 @@ fun BookUpdateScreen(
                             )
                         }
 
-                        RoundedButton(label = "Delete"){
+                        RoundedButton(label = "Delete") {
                             openDialog.value = true
                         }
                     }
@@ -214,7 +217,9 @@ fun ShowAlertDialog(message: String, openDialog: MutableState<Boolean>, onYesPre
                 }
             },
             dismissButton = {
-                openDialog.value = false
+                TextButton(onClick = { openDialog.value = false }) {
+                    Text(text = "Yes")
+                }
             },
             title = { Text(text = "Delete Book") },
             text = { Text(text = message) })

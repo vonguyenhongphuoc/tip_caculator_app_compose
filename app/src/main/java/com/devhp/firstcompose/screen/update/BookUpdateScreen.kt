@@ -218,7 +218,7 @@ fun ShowAlertDialog(message: String, openDialog: MutableState<Boolean>, onYesPre
             },
             dismissButton = {
                 TextButton(onClick = { openDialog.value = false }) {
-                    Text(text = "Yes")
+                    Text(text = "No")
                 }
             },
             title = { Text(text = "Delete Book") },

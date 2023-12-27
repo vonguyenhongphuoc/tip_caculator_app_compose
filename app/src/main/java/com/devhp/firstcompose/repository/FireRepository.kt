@@ -49,7 +49,7 @@ class FireRepository @Inject constructor(private val queryBook: CollectionRefere
                 val dataOrException = DataOrException<List<MBook>, Boolean, Exception>()
                 count++
                 Log.d("MyTag", "Running...$count")
-                if(count >= 3){
+                if(count >= 2){
                     Log.d("MyTag", "Run into...$count")
                     if (error != null) {
                         dataOrException.e = error

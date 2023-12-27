@@ -37,6 +37,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -197,18 +199,18 @@ fun ReaderAppBar(
             }
         },
         actions = {
-         if(showProfile){
-             IconButton(onClick = {
-                 FirebaseAuth.getInstance().signOut().run {
-                     navController.navigate(ReaderScreens.LoginScreen.name)
-                 }
-             }) {
-                 Icon(
-                     imageVector = Icons.Filled.Logout,
-                     contentDescription = "Logout"
-                 )
-             }
-         }
+            if (showProfile) {
+                IconButton(onClick = {
+                    FirebaseAuth.getInstance().signOut().run {
+                        navController.navigate(ReaderScreens.LoginScreen.name)
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Logout,
+                        contentDescription = "Logout"
+                    )
+                }
+            }
         },
         navigationIcon = {
             if (icon != null) {
@@ -276,6 +278,9 @@ fun ListCard(
     val displayMetrics = resources.displayMetrics
     val screenWidth = displayMetrics.widthPixels / displayMetrics.density
     val spacing = 10.dp
+    val isStartedReading = remember {
+        mutableStateOf(false)
+    }
 
     Card(
         shape = RoundedCornerShape(29.dp),
@@ -312,14 +317,14 @@ fun ListCard(
                         contentDescription = "Fav Icon",
                         modifier = Modifier.padding(bottom = 1.dp)
                     )
-                    BookRating(score = 3.5)
+                    BookRating(score = book.rating ?: 3.5)
                 }
             }
             Text(
                 text = book.title.toString(),
                 modifier = Modifier.padding(4.dp),
                 fontWeight = FontWeight.Bold,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
 
@@ -335,7 +340,11 @@ fun ListCard(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.Bottom
         ) {
-            RoundedButton(label = "Reading", radius = 70)
+            isStartedReading.value = book.startedReading != null
+            RoundedButton(
+                label = if (isStartedReading.value) "Reading" else "Not Started",
+                radius = 70
+            )
         }
 
     }

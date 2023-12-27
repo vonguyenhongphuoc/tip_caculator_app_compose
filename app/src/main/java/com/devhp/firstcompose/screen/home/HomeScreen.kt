@@ -150,7 +150,10 @@ fun HomeContent(navController: NavHostController, viewModel: HomeScreenViewModel
 
 @Composable
 fun ReadingRightNowArea(books: List<MBook>, navController: NavHostController) {
-    for (book in books) {
+    val readingNowList = books.filter {
+        mBook -> mBook.startedReading != null && mBook.finishedReading == null
+    }
+    for (book in readingNowList) {
         ListCard(book) {
             navController.navigate(ReaderScreens.BookUpdateScreen.name + "/$it")
         }
@@ -159,7 +162,11 @@ fun ReadingRightNowArea(books: List<MBook>, navController: NavHostController) {
 
 @Composable
 fun BookListArea(listOfBooks: List<MBook>, navController: NavHostController) {
-    HorizontalScrollComponent(listOfBooks) {
+    val addedBooks = listOfBooks.filter {
+        mBook -> mBook.startedReading == null && mBook.finishedReading == null
+    }
+
+    HorizontalScrollComponent(addedBooks) {
         navController.navigate(ReaderScreens.BookUpdateScreen.name + "/$it")
     }
 }
